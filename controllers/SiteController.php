@@ -2,6 +2,8 @@
 
 namespace app\controllers;
 
+use app\models\Protocollo;
+use app\models\VerificaForm;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -50,6 +52,11 @@ class SiteController extends Controller
             'captcha' => [
                 'class' => 'yii\captcha\CaptchaAction',
                 'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
+                'minLength' => 5,  // Numero minimo di caratteri nel CAPTCHA
+                'maxLength' => 7,  // Numero massimo di caratteri
+                'padding' => 30,    // Spaziatura tra i caratteri
+                'height' => 150,    // Altezza dell'immagine CAPTCHA
+                'width' => 300,    // Larghezza dell'immagine CAPTCHA
             ],
         ];
     }
@@ -61,41 +68,11 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
-    }
+        $model = new VerificaForm();
 
-    /**
-     * Login action.
-     *
-     * @return Response|string
-     */
-    public function actionLogin()
-    {
-        if (!Yii::$app->user->isGuest) {
-            return $this->goHome();
-        }
-
-        $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
-        }
-
-        $model->password = '';
-        return $this->render('login', [
+        return $this->render('index', [
             'model' => $model,
         ]);
-    }
-
-    /**
-     * Logout action.
-     *
-     * @return Response
-     */
-    public function actionLogout()
-    {
-        Yii::$app->user->logout();
-
-        return $this->goHome();
     }
 
     /**
@@ -103,26 +80,31 @@ class SiteController extends Controller
      *
      * @return Response|string
      */
-    public function actionContact()
+    public function actionVerifica()
     {
-        $model = new ContactForm();
-        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
-            Yii::$app->session->setFlash('contactFormSubmitted');
+        $model = new VerificaForm();
 
-            return $this->refresh();
+        if ($model->load(Yii::$app->request->get()) && $model->validate()) {
+            $tutti = [];
+            $risultato = Protocollo::find()->where([
+                'protocollo' => $model->protocollo,
+                'cf_titolare_esenzione' => $model->codice_fiscale
+            ])->one();
+
+            if ($risultato) {
+                $tutti = Protocollo::find()->where([
+                    'cf_titolare_esenzione' => $model->codice_fiscale
+                ])->all();
+            }
+
+            return $this->render('verifica', [
+                'model' => $model, // Passa il modello alla vista
+                'risultato' => $risultato,
+                'tutti' => $tutti
+            ]);
+        } else {
+            // Gestisci il caso in cui i dati non sono validi o mancanti
+            return $this->render('index', ['model' => $model]);
         }
-        return $this->render('contact', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * Displays about page.
-     *
-     * @return string
-     */
-    public function actionAbout()
-    {
-        return $this->render('about');
     }
 }

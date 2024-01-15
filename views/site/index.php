@@ -1,53 +1,62 @@
 <?php
 
 /** @var yii\web\View $this */
+/** @var \app\models\VerificaForm $model */
 
-$this->title = 'My Yii Application';
+use yii\bootstrap5\ActiveForm;
+use yii\bootstrap5\Html;
+use yii\captcha\Captcha;
+
+$this->title = Yii::$app->name;
 ?>
+<style>
+    .form-center {
+        display: flex;
+        justify-content: center; /* Centers horizontally */
+        align-items: center; /* Centers vertically */
+        flex-direction: column; /* Stack elements vertically */
+    }
+</style>
+
 <div class="site-index">
 
     <div class="jumbotron text-center bg-transparent mt-5 mb-5">
-        <h1 class="display-4">Congratulations!</h1>
+        <img src="/images/asp-messina.jpg" alt="ASP Messina" class="img-fluid rounded mx-auto d-block">
+        <h1 class="display-4">Verifica Esenzioni</h1>
 
-        <p class="lead">You have successfully created your Yii-powered application.</p>
+        <p class="lead">Inserire protocollo e codice fiscale</p>
+        <div class="form-center">
+            <?php
+            $form = ActiveForm::begin([
+                'action' => ['site/verifica'],
+                'method' => 'get',
+            ]);
 
-        <p><a class="btn btn-lg btn-success" href="https://www.yiiframework.com">Get started with Yii</a></p>
-    </div>
+            echo $form->field($model, 'protocollo')->textInput([
+                'class' => 'form-control mb-2 mr-sm-2',
+                'placeholder' => 'Protocollo',
+                'style' => "width: 400px;",
+                'maxlength' => 9,
+            ])->label(false);
 
-    <div class="body-content">
+            echo $form->field($model, 'codice_fiscale')->textInput([
+                'class' => 'form-control mb-2 mr-sm-2',
+                'placeholder' => 'Codice Fiscale',
+                'style' => "width: 400px;",
+                'maxlength' => 16,
+            ])->label(false);
 
-        <div class="row">
-            <div class="col-lg-4 mb-3">
-                <h2>Heading</h2>
+            echo $form->field($model, 'captcha')->widget(Captcha::class, [
+                'template' => '<div class="row" style="max-width: 400px"><div class="col-lg-12">{image}</div><div class="col-lg-12">{input}</div></div>',
+                'options' => [
+                    'class' => 'form-control',
+                    'placeholder' => 'Inserisci il codice soprastante'
+                ]])->label(false);
 
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
+            echo Html::submitButton('Verifica', ['class' => 'btn btn-lg mb-2 btn-success']);
 
-                <p><a class="btn btn-outline-secondary" href="https://www.yiiframework.com/doc/">Yii Documentation &raquo;</a></p>
-            </div>
-            <div class="col-lg-4 mb-3">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-outline-secondary" href="https://www.yiiframework.com/forum/">Yii Forum &raquo;</a></p>
-            </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-outline-secondary" href="https://www.yiiframework.com/extensions/">Yii Extensions &raquo;</a></p>
-            </div>
+            ActiveForm::end();
+            ?>
         </div>
-
     </div>
 </div>
