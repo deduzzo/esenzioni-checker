@@ -8,6 +8,7 @@ use yii\db\Query;
 /**
  * This is the model class for table "protocollo".
  *
+ * @property int $id_protocollo
  * @property string $protocollo
  * @property int $anno
  * @property string $cf_titolare_esenzione
@@ -44,7 +45,7 @@ class Protocollo extends \yii\db\ActiveRecord
             [['protocollo', 'cf_titolare_esenzione', 'cod_fiscale'], 'string', 'max' => 16],
             [['esenzione', 'data_inizio', 'data_fine'], 'string', 'max' => 10],
             [['esito'], 'string', 'max' => 100],
-            [['protocollo'], 'unique'],
+            [['protocollo', 'anno'], 'unique', 'targetAttribute' => ['protocollo', 'anno']],
         ];
     }
 
@@ -54,6 +55,7 @@ class Protocollo extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
+            'id_protocollo' => 'Id Protocollo',
             'protocollo' => 'Protocollo',
             'anno' => 'Anno',
             'cf_titolare_esenzione' => 'Cf Titolare Esenzione',
@@ -74,7 +76,7 @@ class Protocollo extends \yii\db\ActiveRecord
      */
     public function getRicettas()
     {
-        return $this->hasMany(Ricetta::class, ['id_protocollo' => 'protocollo']);
+        return $this->hasMany(Ricetta::class, ['id_protocollo' => 'id_protocollo']);
     }
 
     public static function totaleImportoTotaleProtocolliByCf($cf)

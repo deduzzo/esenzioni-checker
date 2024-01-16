@@ -15,7 +15,7 @@ use Yii;
  * @property string|null $data_prescrizione
  * @property string|null $data_spedizione
  * @property float|null $ticket
- * @property string $id_protocollo
+ * @property int $id_protocollo
  *
  * @property Protocollo $protocollo
  */
@@ -38,11 +38,11 @@ class Ricetta extends \yii\db\ActiveRecord
             [['numero', 'id_protocollo'], 'required'],
             [['tipologia'], 'string'],
             [['ticket'], 'number'],
+            [['id_protocollo'], 'integer'],
             [['numero'], 'string', 'max' => 20],
             [['struttura', 'ubicazione'], 'string', 'max' => 100],
             [['data_prescrizione', 'data_spedizione'], 'string', 'max' => 10],
-            [['id_protocollo'], 'string', 'max' => 16],
-            [['id_protocollo'], 'exist', 'skipOnError' => true, 'targetClass' => Protocollo::class, 'targetAttribute' => ['id_protocollo' => 'protocollo']],
+            [['id_protocollo'], 'exist', 'skipOnError' => true, 'targetClass' => Protocollo::class, 'targetAttribute' => ['id_protocollo' => 'id_protocollo']],
         ];
     }
 
@@ -71,6 +71,6 @@ class Ricetta extends \yii\db\ActiveRecord
      */
     public function getProtocollo()
     {
-        return $this->hasOne(Protocollo::class, ['protocollo' => 'id_protocollo']);
+        return $this->hasOne(Protocollo::class, ['id_protocollo' => 'id_protocollo']);
     }
 }

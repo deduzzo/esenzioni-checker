@@ -94,7 +94,7 @@ class SiteController extends Controller
             if ($risultato) {
                 $tutti = Protocollo::find()->where([
                     'cf_titolare_esenzione' => $model->codice_fiscale
-                ])->all();
+                ])->orderBy(['anno' => SORT_DESC])->all();
             }
 
             return $this->render('verifica', [
