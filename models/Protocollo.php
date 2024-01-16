@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\db\Query;
 
 /**
  * This is the model class for table "protocollo".
@@ -74,5 +75,14 @@ class Protocollo extends \yii\db\ActiveRecord
     public function getRicettas()
     {
         return $this->hasMany(Ricetta::class, ['id_protocollo' => 'protocollo']);
+    }
+
+    public static function totaleImportoTotaleProtocolliByCf($cf)
+    {
+        return (new Query())
+            ->select('SUM(importo_totale) AS totale')
+            ->from('protocollo')
+            ->where(['cf_titolare_esenzione' => $cf])
+            ->scalar();
     }
 }
