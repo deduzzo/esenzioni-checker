@@ -16,7 +16,7 @@ class VerificaForm extends Model
             // validazione per protocollo e codice fiscale
             [['protocollo', 'codice_fiscale'], 'required'],
             ['protocollo', 'match', 'pattern' => '/^[0-9]{1,9}$/'],
-            ['codice_fiscale', 'string', 'max' => 16],
+            ['codice_fiscale', 'string', 'length' => 16],
             // regola per la validazione CAPTCHA
             ['captcha', 'captcha'],
         ];

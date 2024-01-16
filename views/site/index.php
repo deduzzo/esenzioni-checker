@@ -16,16 +16,24 @@ $this->title = Yii::$app->name;
         align-items: center; /* Centers vertically */
         flex-direction: column; /* Stack elements vertically */
     }
+    .bold-input::placeholder { /* Stile per il placeholder */
+        font-weight: normal;
+    }
+
+    .bold-input { /* Stile per il testo inserito */
+        font-weight: bold;
+    }
 </style>
 
 <div class="site-index">
 
-    <div class="jumbotron text-center bg-transparent mt-5 mb-5">
+    <div class="text-center bg-transparent mt-5 mb-5">
         <img src="/images/asp-messina.jpg" alt="ASP Messina" class="img-fluid rounded mx-auto d-block">
         <h1 class="display-4">Verifica Esenzioni</h1>
 
-        <p class="lead">Inserire protocollo e codice fiscale</p>
+        <p class="lead">Inserire protocollo e codice fiscale del titolare esenzione contestata per verificare i protocolli collegati</p>
         <div class="form-center">
+
             <?php
             $form = ActiveForm::begin([
                 'action' => ['site/verifica'],
@@ -33,17 +41,19 @@ $this->title = Yii::$app->name;
             ]);
 
             echo $form->field($model, 'protocollo')->textInput([
-                'class' => 'form-control mb-2 mr-sm-2',
+                'class' => 'form-control mb-2 mr-sm-2 bold-input',
                 'placeholder' => 'Protocollo',
                 'style' => "width: 400px;",
                 'maxlength' => 9,
+                'oninput' => "this.value = this.value.replace(/[^0-9]/g, '')",
             ])->label(false);
 
             echo $form->field($model, 'codice_fiscale')->textInput([
-                'class' => 'form-control mb-2 mr-sm-2',
+                'class' => 'form-control mb-2 mr-sm-2 bold-input',
                 'placeholder' => 'Codice Fiscale',
                 'style' => "width: 400px;",
                 'maxlength' => 16,
+                'oninput' => "this.value = this.value.toUpperCase()",
             ])->label(false);
 
             echo $form->field($model, 'captcha')->widget(Captcha::class, [
