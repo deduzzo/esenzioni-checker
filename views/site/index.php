@@ -56,6 +56,24 @@ $this->title = Yii::$app->name;
                 'oninput' => "this.value = this.value.toUpperCase()",
             ])->label(false);
 
+            echo $form->field($model, 'tipo_cf')->radioList([
+                'titolare' => 'Titolare Esenzione',
+                'assistito' => 'Assistito'
+            ], [
+                'item' => function ($index, $label, $name, $checked, $value) {
+                    // Imposta 'checked' per la prima opzione (indice 0)
+                    $checkedAttr = ($index === 0) ? 'checked' : '';
+                    $return = '<div class="form-check form-check-inline">';
+                    $return .= '<input class="form-check-input" type="radio" name="' . $name . '" value="' . $value . '" ' . $checkedAttr . ' id="customRadio' . $index . '">';
+                    $return .= '<label class="form-check-label" for="customRadio' . $index . '">';
+                    $return .= ucwords($label);
+                    $return .= '</label>';
+                    $return .= '</div>';
+
+                    return $return;
+                }
+            ])->label(false);
+
             echo $form->field($model, 'captcha')->widget(Captcha::class, [
                 'template' => '<div class="row" style="max-width: 400px"><div class="col-lg-12">{image}</div><div class="col-lg-12">{input}</div></div>',
                 'options' => [

@@ -86,15 +86,26 @@ class SiteController extends Controller
 
         if ($model->load(Yii::$app->request->get()) && $model->validate()) {
             $tutti = [];
-            $risultato = Protocollo::find()->where([
-                'protocollo' => $model->protocollo,
-                'cf_titolare_esenzione' => $model->codice_fiscale
-            ])->one();
+            if ($model->tipo_cf == 'titolare')
+                $risultato = Protocollo::find()->where([
+                    'protocollo' => $model->protocollo,
+                    'cf_titolare_esenzione' => $model->codice_fiscale
+                ])->one();
+            else
+                $risultato = Protocollo::find()->where([
+                    'protocollo' => $model->protocollo,
+                    'cod_fiscale' => $model->codice_fiscale
+                ])->one();
 
             if ($risultato) {
-                $tutti = Protocollo::find()->where([
-                    'cf_titolare_esenzione' => $model->codice_fiscale
-                ])->orderBy(['anno' => SORT_DESC])->all();
+                if ($model->tipo_cf == 'titolare')
+                    $tutti = Protocollo::find()->where([
+                        'cf_titolare_esenzione' => $model->codice_fiscale
+                    ])->orderBy(['anno' => SORT_DESC])->all();
+                else
+                    $tutti = Protocollo::find()->where([
+                        'cod_fiscale' => $model->codice_fiscale
+                    ])->orderBy(['anno' => SORT_DESC])->all();
             }
 
             return $this->render('verifica', [
