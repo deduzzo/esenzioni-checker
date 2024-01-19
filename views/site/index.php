@@ -42,10 +42,8 @@ $this->title = Yii::$app->name;
 <div class="site-index">
 
     <div class="text-center bg-transparent mt-5 mb-5">
-        <img src="/images/asp-messina.jpg" alt="ASP Messina" class="img-fluid rounded mx-auto d-block">
-        <h1 class="display-4">Verifica Esenzioni</h1>
-        <p class="lead">Inserire protocollo e codice fiscale del titolare esenzione contestata per verificare i
-            protocolli collegati</p>
+        <img src="images/asp-messina.jpg" alt="ASP Messina" class="img-fluid rounded mx-auto d-block">
+        <h5 class="display-5">Verifica Contestazioni Esenzioni</h5>
         <div class="form-center">
             <?php
 
