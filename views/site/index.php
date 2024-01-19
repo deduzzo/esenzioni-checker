@@ -12,6 +12,7 @@ use kartik\select2\Select2;
 use yii\bootstrap5\ActiveForm;
 use yii\bootstrap5\Html;
 use yii\captcha\Captcha;
+use yii\helpers\Url;
 
 $this->title = Yii::$app->name;
 ?>
@@ -42,7 +43,7 @@ $this->title = Yii::$app->name;
 <div class="site-index">
 
     <div class="text-center bg-transparent mt-5 mb-5">
-        <img src="images/asp-messina.jpg" alt="ASP Messina" class="img-fluid rounded mx-auto d-block">
+        <img src="<?= Url::to('@web/images/asp-messina.jpg'); ?>" alt="ASP Messina" class="img-fluid rounded mx-auto d-block">
         <h5 class="display-5">Verifica Contestazioni Esenzioni</h5>
         <div class="form-center">
             <?php
