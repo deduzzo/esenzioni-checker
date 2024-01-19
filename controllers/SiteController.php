@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\enums\TipologiaEsente;
 use app\models\Protocollo;
 use app\models\VerificaForm;
 use Yii;
@@ -10,7 +11,6 @@ use yii\web\Controller;
 use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
-use app\models\ContactForm;
 
 class SiteController extends Controller
 {
@@ -22,10 +22,10 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::class,
-                'only' => ['logout','index'],
+                'only' => ['logout', 'index'],
                 'rules' => [
                     [
-                        'actions' => ['logout','index'],
+                        'actions' => ['logout', 'index'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -51,7 +51,7 @@ class SiteController extends Controller
             ],
             'captcha' => [
                 'class' => 'yii\captcha\CaptchaAction',
-                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
+                'fixedVerifyCode' => YII_ENV_TEST ? 'vai' : null,
                 'minLength' => 5,  // Numero minimo di caratteri nel CAPTCHA
                 'maxLength' => 7,  // Numero massimo di caratteri
                 'padding' => 30,    // Spaziatura tra i caratteri
@@ -70,8 +70,51 @@ class SiteController extends Controller
     {
         $model = new VerificaForm();
 
+        $tuttiGliAnni = Protocollo::getAnniProtocolli();
+
+        if ($this->request->post()) {
+            if ($model->load($this->request->post()) && $model->validate()) {
+                $tutti = [];
+                $risultato = Protocollo::find();
+                if ($model->protocollo)
+                    $risultato = $risultato->andWhere(['protocollo' => $model->protocollo]);
+                if ($model->codice_fiscale) {
+                    switch ($model->tipo_cf) {
+                        case TipologiaEsente::ASSITITO_ESENTE:
+                            $risultato = $risultato->andWhere(['cf_esente' => $model->codice_fiscale]);
+                            break;
+                        case TipologiaEsente::ASSISTITO_DICHIARANTE:
+                            $risultato = $risultato->andWhere(['cf_dichiarante' => $model->codice_fiscale]);
+                            break;
+                        case TipologiaEsente::ASSISTITO_TITOLARE:
+                            $risultato = $risultato->andWhere(['cf_titolare' => $model->codice_fiscale]);
+                            break;
+                        case TipologiaEsente::TUTTI:
+                            $risultato = $risultato->andWhere(['or',
+                                ['cf_esente' => $model->codice_fiscale],
+                                ['cf_dichiarante' => $model->codice_fiscale],
+                                ['cf_titolare' => $model->codice_fiscale],
+                            ]);
+                            break;
+                    }
+                }
+                $risultato = $risultato->andWhere(['in', 'anno', $model->anni])
+                    ->orderBy(['anno' => SORT_DESC])->all();
+
+                return $this->render('verifica', [
+                    'model' => $model, // Passa il modello alla vista
+                    'risultato' => $risultato,
+                ]);
+            }
+        }
+        else {
+            $model->anni = array_keys($tuttiGliAnni);
+            $model->tipo_cf = TipologiaEsente::TUTTI;
+        }
+
         return $this->render('index', [
             'model' => $model,
+            'anni' => $tuttiGliAnni,
         ]);
     }
 
@@ -104,47 +147,5 @@ class SiteController extends Controller
         return $this->goHome();
     }
 
-    /**
-     * Displays contact page.
-     *
-     * @return Response|string
-     */
-    public function actionVerifica()
-    {
-        $model = new VerificaForm();
 
-        if ($model->load(Yii::$app->request->get()) && $model->validate()) {
-            $tutti = [];
-            if ($model->tipo_cf == 'titolare')
-                $risultato = Protocollo::find()->where([
-                    'protocollo' => $model->protocollo,
-                    'cf_titolare_esenzione' => $model->codice_fiscale
-                ])->one();
-            else
-                $risultato = Protocollo::find()->where([
-                    'protocollo' => $model->protocollo,
-                    'cod_fiscale' => $model->codice_fiscale
-                ])->one();
-
-            if ($risultato) {
-                if ($model->tipo_cf == 'titolare')
-                    $tutti = Protocollo::find()->where([
-                        'cf_titolare_esenzione' => $model->codice_fiscale
-                    ])->orderBy(['anno' => SORT_DESC])->all();
-                else
-                    $tutti = Protocollo::find()->where([
-                        'cod_fiscale' => $model->codice_fiscale
-                    ])->orderBy(['anno' => SORT_DESC])->all();
-            }
-
-            return $this->render('verifica', [
-                'model' => $model, // Passa il modello alla vista
-                'risultato' => $risultato,
-                'tutti' => $tutti
-            ]);
-        } else {
-            // Gestisci il caso in cui i dati non sono validi o mancanti
-            return $this->render('index', ['model' => $model]);
-        }
-    }
 }

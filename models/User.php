@@ -2,6 +2,8 @@
 
 namespace app\models;
 
+use app\models\enums\TipologiaLogin;
+
 class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
 {
     public $id;
@@ -9,6 +11,10 @@ class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
     public $password;
     public $authKey;
     public $accessToken;
+
+    public static $utentiDefault = [
+        "asp" => "asp",
+    ];
 
 
     /**
@@ -54,30 +60,42 @@ class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
         return null;
     }
 
-    public static function findByUsernameAndPassword($username, $password)
+    public static function findByUsernameAndPassword($username, $password, $tipo)
     {
-        if (strpos($username, "@asp.messina.it") === false)
-            $username .= "@asp.messina.it";
-        $ldap = ldap_connect("asp.messina.it");
-        print_r($ldap);
-        if ($ldap) {
-            ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);  // Imposta la versione del protocollo LDAP
-            ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
+        switch ($tipo) {
+            case TipologiaLogin::DOMINIO:
+                if (!str_contains($username, "@asp.messina.it"))
+                    $username .= "@asp.messina.it";
+                $ldap = ldap_connect("asp.messina.it");
+                print_r($ldap);
+                if ($ldap) {
+                    ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);  // Imposta la versione del protocollo LDAP
+                    ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
 
-            $binding = @ldap_bind($ldap, $username, $password);  // sostituisci con le credenziali dell'utente
-            if (!$binding) {
-                return null;
-            }
-            ldap_unbind($ldap); // disconnetti dal server LDAP
-        } else {
-            return null;
+                    $binding = @ldap_bind($ldap, $username, $password);  // sostituisci con le credenziali dell'utente
+                    if (!$binding) {
+                        return null;
+                    }
+                    ldap_unbind($ldap); // disconnetti dal server LDAP
+                } else {
+                    return null;
+                }
+
+                return new User([
+                    "id" => $username,
+                    "username" => str_replace("@asp.messina.it", "", $username),
+                    "password" => $password
+                ]) ;
+            case TipologiaLogin::STATICO:
+                if (array_key_exists($username, self::$utentiDefault) && self::$utentiDefault[$username] == $password)
+                    return new User([
+                        "id" => $username,
+                        "username" => $username,
+                        "password" => $password
+                    ]) ;
+                else
+                    return null;
         }
-
-        return new User([
-            "id" => $username,
-            "username" => str_replace("@asp.messina.it", "", $username),
-            "password" => $password
-        ]) ;
     }
 
     /**

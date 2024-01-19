@@ -4,6 +4,8 @@ namespace app\models;
 
 use Yii;
 use yii\db\Query;
+use yii\helpers\ArrayHelper;
+
 
 /**
  * This is the model class for table "protocollo".
@@ -11,9 +13,10 @@ use yii\db\Query;
  * @property int $id_protocollo
  * @property string $protocollo
  * @property int $anno
- * @property string $cf_titolare_esenzione
+ * @property string $cf_esente
+ * @property string|null $cf_dichiarante
+ * @property string|null $cf_titolare
  * @property string|null $esenzione
- * @property string|null $cod_fiscale
  * @property string|null $data_inizio
  * @property string|null $data_fine
  * @property string|null $esito
@@ -32,17 +35,32 @@ class Protocollo extends \yii\db\ActiveRecord
         return 'protocollo';
     }
 
+    public static function getAnniProtocolli()
+    {
+        $anni = [];
+        $query = (new Query())
+            ->select('anno')
+            ->from('protocollo')
+            ->distinct()
+            ->orderBy('anno ASC')
+            ->column();
+        foreach ($query as $anno) {
+            $anni[$anno] = $anno;
+        }
+        return $anni;
+    }
+
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['protocollo', 'anno', 'cf_titolare_esenzione'], 'required'],
+            [['protocollo', 'anno', 'cf_esente'], 'required'],
             [['anno'], 'integer'],
             [['descrizione'], 'string'],
             [['importo_totale'], 'number'],
-            [['protocollo', 'cf_titolare_esenzione', 'cod_fiscale'], 'string', 'max' => 16],
+            [['protocollo', 'cf_esente', 'cf_dichiarante', 'cf_titolare'], 'string', 'max' => 16],
             [['esenzione', 'data_inizio', 'data_fine'], 'string', 'max' => 10],
             [['esito'], 'string', 'max' => 100],
             [['protocollo', 'anno'], 'unique', 'targetAttribute' => ['protocollo', 'anno']],
@@ -58,9 +76,10 @@ class Protocollo extends \yii\db\ActiveRecord
             'id_protocollo' => 'Id Protocollo',
             'protocollo' => 'Protocollo',
             'anno' => 'Anno',
-            'cf_titolare_esenzione' => 'Cf Titolare Esenzione',
+            'cf_esente' => 'Cf Esente',
+            'cf_dichiarante' => 'Cf Dichiarante',
+            'cf_titolare' => 'Cf Titolare',
             'esenzione' => 'Esenzione',
-            'cod_fiscale' => 'Cod Fiscale',
             'data_inizio' => 'Data Inizio',
             'data_fine' => 'Data Fine',
             'esito' => 'Esito',
@@ -79,12 +98,12 @@ class Protocollo extends \yii\db\ActiveRecord
         return $this->hasMany(Ricetta::class, ['id_protocollo' => 'id_protocollo']);
     }
 
-    public static function totaleImportoTotaleProtocolliByCf($cf)
+    public static function totaleImportoTotaleProtocolli($arrayProtocolli)
     {
-        return (new Query())
-            ->select('SUM(importo_totale) AS totale')
-            ->from('protocollo')
-            ->where(['cf_titolare_esenzione' => $cf])
-            ->scalar();
+        $totale = 0;
+        foreach ($arrayProtocolli as $protocollo) {
+            $totale += $protocollo->importo_totale;
+        }
+        return $totale;
     }
 }
