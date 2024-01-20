@@ -106,6 +106,8 @@ class SiteController extends Controller
                     'risultato' => $risultato,
                 ]);
             }
+            else
+                $model->captcha = '';
         }
         else {
             $model->anni = array_keys($tuttiGliAnni);

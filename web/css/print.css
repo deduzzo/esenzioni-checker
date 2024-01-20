@@ -1,0 +1,21 @@
+@media print {
+    #out .table {
+        width: 100%; /* Imposta la larghezza delle tabelle al 100% per la stampa */
+        margin-bottom: 10px; /* Aggiunge spaziatura sotto ogni tabella per la stampa */
+        border-collapse: collapse;
+    }
+
+    #out .table td, #out .table th {
+        border: 1px solid black;
+    }
+
+    #out .table-main {
+        border: 3px double black;
+    }
+
+    #btnStampa {
+        display: none;
+    }
+
+    /* ... altri stili specifici per la stampa ... */
+}
