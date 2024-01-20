@@ -1,6 +1,7 @@
 @media print {
     #out .table {
         width: 100%; /* Imposta la larghezza delle tabelle al 100% per la stampa */
+        max-width: 100%;
         margin-bottom: 10px; /* Aggiunge spaziatura sotto ogni tabella per la stampa */
         border-collapse: collapse;
     }
@@ -17,5 +18,8 @@
         display: none;
     }
 
-    /* ... altri stili specifici per la stampa ... */
+    .table-main tr, .table-sub tr {
+        page-break-inside: avoid; /* Evita la divisione delle singole righe tra le pagine */
+        page-break-after: auto; /* Default, ma può essere specificato per maggiore chiarezza */
+    }
 }

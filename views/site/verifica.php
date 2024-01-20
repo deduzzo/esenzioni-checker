@@ -36,7 +36,8 @@ $this->title = Yii::$app->name;
         printJS({
             printable: 'out',
             type: 'html',
-            css: '<?= Yii::getAlias('@web/css/print.css') ?>'
+            css: '<?= Yii::getAlias('@web/css/print.css') ?>',
+            maxWidth: 800,
         });
     }
 </script>
