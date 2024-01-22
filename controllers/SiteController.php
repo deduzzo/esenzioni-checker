@@ -99,11 +99,20 @@ class SiteController extends Controller
                     }
                 }
                 $risultato = $risultato->andWhere(['in', 'anno', $model->anni])
-                    ->orderBy(['anno' => SORT_DESC])->all();
+                    ->orderBy(['anno' => SORT_ASC])->all();
+
+                // crea un oggetto con il totale dei protocolli trovati per anno, array associativo anno -> importo
+                $totalePerAnno = [];
+                foreach ($risultato as $protocollo) {
+                    if (!isset($totalePerAnno[$protocollo->anno]))
+                        $totalePerAnno[$protocollo->anno] = 0;
+                    $totalePerAnno[$protocollo->anno] += $protocollo->importo_totale;
+                }
 
                 return $this->render('verifica', [
                     'model' => $model, // Passa il modello alla vista
                     'risultato' => $risultato,
+                    'totalePerAnno' => $totalePerAnno,
                 ]);
             }
             else

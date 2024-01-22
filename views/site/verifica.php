@@ -1,11 +1,13 @@
 <?php
 /** @var yii\web\View $this */
-/** @var \app\models\VerificaForm $model */
+/** @var VerificaForm $model */
+/** @var Protocollo[] $risultato */
+/** @var array $totalePerAnno */
 
-/** @var \app\models\Protocollo[] $risultato */
 
 
 use app\models\Protocollo;
+use app\models\VerificaForm;
 use yii\bootstrap5\Html;
 
 $this->title = Yii::$app->name;
@@ -61,11 +63,28 @@ $this->title = Yii::$app->name;
             <div class="alert alert-success">
                 <p>Sono stati segnalati da SOGEI <b> <?= count($risultato) ?> </b> protocolli con il codice fiscale
                     <b><?= $model->codice_fiscale ?></b></p>
-                <p>Importo totale contestato:
+                <p>Importo totale contestato (tutte le annualità):
                     <b> <?= Protocollo::totaleImportoTotaleProtocolli($risultato) . "€" ?></b>
                 </p>
+                <!-- suddivisione per anni -->
+                <table class="table table-striped table-bordered table-main" style="max-width: 200px">
+                    <thead>
+                    <tr>
+                        <th>Anno</th>
+                        <th>Importo</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php foreach ($totalePerAnno as $anno => $importo): ?>
+                        <tr>
+                            <td><?= $anno ?></td>
+                            <td><?= $importo . "€" ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
                 <div class="alert alert-warning">
-                    <p>Gli importi sono relativi ai <b>SOLI</b> protocolli, sono pertanto <b>escluse eventuali sanzioni o ulteriori spese notifica</b>, se dovute</p>
+                    <p><b>ATTENZIONE!!</b><br />Gli importi mostrati sono relativi ai <b>SOLI</b> protocolli come rilevabile su Sogei, sono pertanto <b>ESCLUSE eventuali sanzioni o ulteriori spese notifica</b>, se dovute.</p>
                 </div>
                 <!-- Alert con scritta "Stampa Contenuto" -->
                 <button id="btnStampa" onclick="printDiv2()">Stampa Contenuto</button>
