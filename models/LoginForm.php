@@ -17,7 +17,7 @@ class LoginForm extends Model
     public $username;
     public $password;
     public $rememberMe = true;
-    public $tipo = TipologiaLogin::STATICO;
+    public $tipo = TipologiaLogin::DOMINIO;
 
     private $_user = false;
 
