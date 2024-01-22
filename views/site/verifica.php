@@ -64,6 +64,10 @@ $this->title = Yii::$app->name;
                 <p>Importo totale contestato:
                     <b> <?= Protocollo::totaleImportoTotaleProtocolli($risultato) . "€" ?></b>
                 </p>
+                <div class="alert alert-warning">
+                    <p>Gli importi sono relativi ai <b>SOLI</b> protocolli, sono pertanto <b>escluse eventuali sanzioni o ulteriori spese notifica</b>, se dovute</p>
+                </div>
+                <!-- Alert con scritta "Stampa Contenuto" -->
                 <button id="btnStampa" onclick="printDiv2()">Stampa Contenuto</button>
             </div>
             <div class="card-body daStampare">
