@@ -105,8 +105,9 @@ class SiteController extends Controller
                 $totalePerAnno = [];
                 foreach ($risultato as $protocollo) {
                     if (!isset($totalePerAnno[$protocollo->anno]))
-                        $totalePerAnno[$protocollo->anno] = 0;
-                    $totalePerAnno[$protocollo->anno] += $protocollo->importo_totale;
+                        $totalePerAnno[$protocollo->anno] = ['totale' => 0, 'numProtocolli' => 0];
+                    $totalePerAnno[$protocollo->anno]['totale'] += $protocollo->importo_totale;
+                    $totalePerAnno[$protocollo->anno]['numProtocolli']++;
                 }
 
                 return $this->render('verifica', [

@@ -61,28 +61,30 @@ $this->title = Yii::$app->name;
             <?php else: ?>
             <!-- mostra il riassunto, numero protocolli trovati e importo totale -->
             <div class="alert alert-success">
-                <p>Sono stati segnalati da SOGEI <b> <?= count($risultato) ?> </b> protocolli con il codice fiscale
+                <p>Sono stati segnalati da SOGEI <b> <?= count($risultato) ?> protocolli</b> con il codice fiscale
                     <b><?= $model->codice_fiscale ?></b></p>
-                <p>Importo totale contestato (tutte le annualità):
-                    <b> <?= Protocollo::totaleImportoTotaleProtocolli($risultato) . "€" ?></b>
-                </p>
                 <!-- suddivisione per anni -->
-                <table class="table table-striped table-bordered table-main" style="max-width: 200px">
+                <table class="table table-striped table-bordered table-main" style="max-width: 500px">
                     <thead>
                     <tr>
                         <th>Anno</th>
-                        <th>Importo</th>
+                        <th>N° contestazioni</th>
+                        <th>Importo Totale</th>
                     </tr>
                     </thead>
                     <tbody>
                     <?php foreach ($totalePerAnno as $anno => $importo): ?>
                         <tr>
                             <td><?= $anno ?></td>
-                            <td><?= $importo . "€" ?></td>
+                            <td><?= $importo['numProtocolli'] ?></td>
+                            <td><?= $importo['totale'] . "€" ?></td>
                         </tr>
                     <?php endforeach; ?>
                     </tbody>
                 </table>
+                <p>Importo totale contestato (tutte le annualità):
+                    <b> <?= Protocollo::totaleImportoTotaleProtocolli($risultato) . "€" ?></b>
+                </p>
                 <div class="alert alert-warning">
                     <p><b>ATTENZIONE!!</b><br />Gli importi mostrati sono relativi ai <b>SOLI</b> protocolli come rilevabile su Sogei, sono pertanto <b>ESCLUSE eventuali sanzioni o ulteriori spese notifica</b>, se dovute.</p>
                 </div>
