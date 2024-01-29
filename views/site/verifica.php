@@ -102,7 +102,7 @@ $this->title = Yii::$app->name;
                     <!-- button to print page -->
                     <div class="d-flex stampa-btn">
                         <button class="btn btn-primary" onclick="window.print()">Stampa Pagina</button>
-                        <p style="margin-left: 20px">Impostazioni di stampa consigliate con Chrome: margini <b>nessuno</b> togliere la spunta in "Grafica in background".</p>
+                        <p style="margin-left: 20px">Impostazioni di stampa consigliate con Chrome: orientamento verticale, margini <b>nessuno</b> togliere la spunta in "Grafica in background".</p>
                     </div>
 
                 </div>
