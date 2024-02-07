@@ -11,6 +11,7 @@ class VerificaForm extends Model
     public $anni;
     public $tipo_cf;
     public $captcha;
+    public $mostraDettagli;
 
     public function rules()
     {
@@ -18,7 +19,7 @@ class VerificaForm extends Model
             ['protocollo', 'required', 'when' => function($model) {
                 return $model->codice_fiscale === null || $model->codice_fiscale === '';
             }, 'message' => "E' necessario inserire almeno uno tra Protocollo e Codice Fiscale."],
-
+            ['mostraDettagli', 'boolean'],
             ['codice_fiscale', 'required', 'when' => function($model) {
                 return $model->protocollo === null || $model->protocollo === '';
             }, 'message' => ''],

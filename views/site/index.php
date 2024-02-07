@@ -31,6 +31,12 @@ $this->title = Yii::$app->name;
         margin-bottom: 20px; /* Aggiungi un margine inferiore, se necessario */
     }
 
+    .dettagli-center {
+        display: flex;
+        justify-content: center; /* Centra orizzontalmente */
+        width: 100%; /* Assicurati che il div occupi l'intera larghezza per permettere la centratura */
+    }
+
     .bold-input::placeholder { /* Stile per il placeholder */
         font-weight: normal;
     }
@@ -43,7 +49,8 @@ $this->title = Yii::$app->name;
 <div class="site-index">
 
     <div class="text-center bg-transparent mt-5 mb-5">
-        <img src="<?= Url::to('@web/images/asp-messina.jpg'); ?>" alt="ASP Messina" class="img-fluid rounded mx-auto d-block">
+        <img src="<?= Url::to('@web/images/asp-messina.jpg'); ?>" alt="ASP Messina"
+             class="img-fluid rounded mx-auto d-block">
         <h5 class="display-5">Verifica Contestazioni Esenzioni</h5>
         <div class="form-center">
             <?php
@@ -68,6 +75,7 @@ $this->title = Yii::$app->name;
                 'maxlength' => 16,
                 'oninput' => "this.value = this.value.toUpperCase()",
             ])->label(false);
+
 
             echo $form->field($model, 'tipo_cf')->radioList(TipologiaEsente::$list, [
                 'item' => function ($index, $label, $name, $checked, $value) {
@@ -94,15 +102,28 @@ $this->title = Yii::$app->name;
                 <label class="form-label">Anni protocollo</label>
             </div>
 
+            <div class="form-floating dettagli-center" style="text-align: center; margin-top: 20px">
+                <div style="width: 280px">
+                    <?php
+                    echo $form->field($model, 'mostraDettagli')->checkbox([
+                        'label' => 'Includi i dettagli delle prestazioni',
+                        'labelOptions' => ['class' => 'form-check-label'],
+                        'class' => 'form-check-input',
+                        'checked' => true,
+                    ]);
+                    ?>
+                </div>
+            </div>
+
 
             <?php
             echo "<div class='captcha-center'>";
-                echo $form->field($model, 'captcha')->widget(Captcha::class, [
-                    'options' => [
-                        'class' => 'form-control',
-                        'placeholder' => 'Inserisci il codice soprastante',
-                        'style' => "width: 400px;",
-                    ]])->label(false);
+            echo $form->field($model, 'captcha')->widget(Captcha::class, [
+                'options' => [
+                    'class' => 'form-control',
+                    'placeholder' => 'Inserisci il codice soprastante',
+                    'style' => "width: 400px;",
+                ]])->label(false);
             echo "</div>";
             echo Html::submitButton('Verifica', ['class' => 'btn btn-lg mb-2 btn-success']);
 

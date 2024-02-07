@@ -17,6 +17,7 @@ use Yii;
  * @property float|null $ticket
  * @property int $id_protocollo
  *
+ * @property Prestazione[] $prestaziones
  * @property Protocollo $protocollo
  */
 class Ricetta extends \yii\db\ActiveRecord
@@ -72,5 +73,15 @@ class Ricetta extends \yii\db\ActiveRecord
     public function getProtocollo()
     {
         return $this->hasOne(Protocollo::class, ['id_protocollo' => 'id_protocollo']);
+    }
+
+    /**
+     * Gets query for [[Prestaziones]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPrestaziones()
+    {
+        return $this->hasMany(Prestazione::class, ['id_ricetta' => 'id']);
     }
 }

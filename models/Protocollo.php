@@ -106,4 +106,13 @@ class Protocollo extends \yii\db\ActiveRecord
         }
         return $totale;
     }
+
+    public function getNumTotalePrestazioni()
+    {
+        return (new Query())
+            ->select('COUNT(*)')
+            ->from('prestazione')->innerJoin('ricetta', 'prestazione.id_ricetta = ricetta.id')
+            ->innerJoin('protocollo', 'ricetta.id_protocollo = protocollo.id_protocollo')
+            ->where(['protocollo.id_protocollo' => $this->id_protocollo])->scalar();
+    }
 }

@@ -2,7 +2,6 @@
 /** @var yii\web\View $this */
 /** @var VerificaForm $model */
 /** @var Protocollo[] $risultato */
-
 /** @var array $totalePerAnno */
 
 
@@ -21,12 +20,18 @@ $this->title = Yii::$app->name;
 
     /* Stili per righe pari delle ricette */
     .ricetta-even-row {
-        background-color: #f8f9fa; /* Colore di sfondo per le righe pari (ad esempio, un grigio chiaro) */
+        background-color: #f8f9fa;
+        margin-bottom: 5px; /* Colore di sfondo per le righe pari (ad esempio, un grigio chiaro) */
     }
 
     /* Stili per righe dispari delle ricette */
     .ricetta-odd-row {
-        background-color: #e9ecef; /* Colore di sfondo per le righe dispari (ad esempio, un grigio leggermente più scuro) */
+        background-color: #e9ecef;
+        margin-bottom: 5px; /* Colore di sfondo per le righe dispari (ad esempio, un grigio leggermente più scuro) */
+    }
+
+    .card-body {
+        padding: 5px;
     }
 
     /* Nascondi la navbar durante la stampa */
@@ -38,12 +43,15 @@ $this->title = Yii::$app->name;
         body {
             font-size: 10px; /* Imposta la dimensione del testo desiderata (ad esempio, 16px) */
         }
+
         .navbar {
             display: none !important;
         }
+
         .stampa-btn {
             display: none !important;
         }
+
         @page {
             margin-top: 100mm; /* Margine inizio pagina */
             margin-bottom: 100mm; /* Margine fine pagina */
@@ -102,7 +110,8 @@ $this->title = Yii::$app->name;
                     <!-- button to print page -->
                     <div class="d-flex stampa-btn">
                         <button class="btn btn-primary" onclick="window.print()">Stampa Pagina</button>
-                        <p style="margin-left: 20px">Impostazioni di stampa consigliate con Chrome: orientamento verticale, margini <b>nessuno</b> togliere la spunta in "Grafica in background".</p>
+                        <p style="margin-left: 20px">Impostazioni di stampa consigliate con Chrome: orientamento
+                            verticale, margini <b>nessuno</b> togliere la spunta in "Grafica in background".</p>
                     </div>
 
                 </div>
@@ -113,13 +122,13 @@ $this->title = Yii::$app->name;
                         <div class="card" style="margin-bottom: 20px">
                             <div class="card-header">
                                 <div class="row">
-                                    <div class="col-md-1">Protocollo</div>
-                                    <div class="col-md-1">Anno</div>
-                                    <div class="col-md-1">Esenzione</div>
-                                    <div class="col-md-3">Codici Fiscali</div>
-                                    <div class="col-md-1">Esito</div>
-                                    <div class="col-md-4">Descrizione</div>
-                                    <div class="col-md-1">Importo</div>
+                                    <div class="col-md-1"><b><i>Protocollo</i></b></div>
+                                    <div class="col-md-1"><b><i>Anno</i></b></div>
+                                    <div class="col-md-1"><b><i>Esenzione</i></b></div>
+                                    <div class="col-md-3"><b><i>Codici Fiscali</i></b></div>
+                                    <div class="col-md-1"><b><i>Esito</i></b></div>
+                                    <div class="col-md-4"><b><i>Descrizione</i></b></div>
+                                    <div class="col-md-1"><b><i>Importo</i></b></div>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -142,27 +151,56 @@ $this->title = Yii::$app->name;
                                     <!-- Ricette con testo ridotto e colore di sfondo diverso -->
                                     <div class="col-12">
                                         <div class="card" style="margin-top:5px">
-                                            <div class="card-header"><b>Ricette</b></div>
+                                            <div class="card-header"><b>Dettaglio: <?= count($protocollo->ricettas) ?> ricette per un totale di <?= $protocollo->getNumTotalePrestazioni() ?> prestazioni</b></div>
                                             <div class="card-body">
                                                 <!-- show header row -->
-                                                <div class="row">
-                                                    <div class="col-md-2"><b>Numero</b></div>
-                                                    <div class="col-md-1"><b>Tipo</b></div>
-                                                    <div class="col-md-3"><b>Struttura</b></div>
-                                                    <div class="col-md-2"><b>Ubicazione</b></div>
-                                                    <div class="col-md-3"><b>Data</b></div>
-                                                    <div class="col-md-1"><b>Ticket</b></div>
-                                                </div>
                                                 <div class="ricette-container">
-                                                    <?php foreach ($protocollo->ricettas as $index2 =>  $ricetta): ?>
-                                                        <div class="row ricetta-row <?= ($index2 % 2 == 0) ? 'ricetta-even-row' : 'ricetta-odd-row' ?>">
-                                                            <div class="col-md-2"><b><?= htmlspecialchars($ricetta->numero) ?></b></div>
-                                                            <div class="col-md-1"><b><?= strtoupper(substr(htmlspecialchars($ricetta->tipologia),0,4).".") ?></b></div>
-                                                            <div class="col-md-3"><?= htmlspecialchars($ricetta->struttura) ?></div>
-                                                            <div class="col-md-2"><?= htmlspecialchars($ricetta->ubicazione) ?></div>
-                                                            <div class="col-md-3"><?= "<b>Data Prescrizione:</b> ". htmlspecialchars($ricetta->data_prescrizione). "<br /><b>Data spedizione:</b> ".
-                                                                htmlspecialchars($ricetta->data_spedizione) ?></div>
-                                                            <div class="col-md-1"><?= htmlspecialchars($ricetta->ticket) ?>€</div>
+                                                    <?php foreach ($protocollo->ricettas as $index2 => $ricetta): ?>
+                                                        <div class="card ricetta-row <?= ($index2 % 2 == 0) ? 'ricetta-even-row' : 'ricetta-odd-row' ?>">
+                                                            <div class="card-body">
+                                                                <div class="row">
+                                                                    <div class="col-md-2" style="text-align: center"><b>n° </b><span
+                                                                                class="badge bg-info text-dark"><?= htmlspecialchars($ricetta->numero) ?></span>
+                                                                    </div>
+                                                                    <div class="col-md-1">
+                                                                        <b><?= strtoupper(substr(htmlspecialchars($ricetta->tipologia), 0, 4) . ".") ?></b>
+                                                                    </div>
+                                                                    <div class="col-md-2"><?= htmlspecialchars($ricetta->struttura) ?></div>
+                                                                    <div class="col-md-2"><?= htmlspecialchars($ricetta->ubicazione) ?></div>
+                                                                    <div class="col-md-3"><?= "<b>Data Prescrizione:</b> " . htmlspecialchars($ricetta->data_prescrizione) . "<br /><b>Data spedizione:</b> " .
+                                                                        htmlspecialchars($ricetta->data_spedizione) ?></div>
+                                                                    <div class="col-md-1">
+                                                                        <b>Tot. Prest: </b><?= count($ricetta->prestaziones) ?>
+                                                                    </div>
+                                                                    <div class="col-md-1">
+                                                                        <b>Tot.</b> <?= htmlspecialchars($ricetta->ticket) ?>
+                                                                        €
+                                                                    </div>
+                                                                    <?php if ($model->mostraDettagli) : ?>
+                                                                        <div class="col-md-12" style="margin-top:15px;">
+                                                                            <div class="row">
+                                                                                <?php foreach ($ricetta->prestaziones as $prestazione): ?>
+                                                                                    <div class="col-md-2" style="text-align: center">
+                                                                                        <b><?= htmlspecialchars($prestazione->data_erogazione) ?></b>
+                                                                                    </div>
+                                                                                    <div class="col-md-2"><b>cod.
+                                                                                            :</b> <?= htmlspecialchars($prestazione->codice_prodotto) ?>
+                                                                                    </div>
+                                                                                    <div class="col-md-5">
+                                                                                        <?= htmlspecialchars($prestazione->descrizione) ?>
+                                                                                    </div>
+                                                                                    <div class="col-md-1"><b>Qta: </b> <?= htmlspecialchars($prestazione->quantita) ?>
+                                                                                    </div>
+                                                                                    <div class="col-md-2">
+                                                                                        <b>Tariffa:</b> <?= htmlspecialchars($prestazione->tariffa) ?>
+                                                                                        €
+                                                                                    </div>
+                                                                                <?php endforeach; ?>
+                                                                            </div>
+                                                                        </div>
+                                                                    <?php endif; ?>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     <?php endforeach; ?>
                                                 </div>
