@@ -28,7 +28,7 @@ class VerificaForm extends Model
             ['anni', 'each', 'rule' => ['integer']],
             ['anni', 'required', 'message' => 'Selezionare almeno un anno.'],
             ['tipo_cf', 'string'],
-            ['captcha', 'captcha'],
+            //['captcha', 'captcha'],
         ];
     }
 }

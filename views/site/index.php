@@ -117,14 +117,14 @@ $this->title = Yii::$app->name;
 
 
             <?php
-            echo "<div class='captcha-center'>";
+           /* echo "<div class='captcha-center'>";
             echo $form->field($model, 'captcha')->widget(Captcha::class, [
                 'options' => [
                     'class' => 'form-control',
                     'placeholder' => 'Inserisci il codice soprastante',
                     'style' => "width: 400px;",
                 ]])->label(false);
-            echo "</div>";
+            echo "</div>";*/
             echo Html::submitButton('Verifica', ['class' => 'btn btn-lg mb-2 btn-success']);
 
             ActiveForm::end();
