@@ -115,11 +115,9 @@ class SiteController extends Controller
                     'risultato' => $risultato,
                     'totalePerAnno' => $totalePerAnno,
                 ]);
-            }
-            else
+            } else
                 $model->captcha = '';
-        }
-        else {
+        } else {
             $model->anni = array_keys($tuttiGliAnni);
             $model->tipo_cf = TipologiaEsente::TUTTI;
         }
@@ -137,11 +135,13 @@ class SiteController extends Controller
         }
 
         $model = new LoginForm();
+
+        // Esegue il login direttamente dopo il load. In caso di OTP richiesto,
+        // login() restituirà false e verrà riproposta la pagina con il campo OTP.
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
             return $this->goBack();
         }
 
-        $model->password = '';
         return $this->render('login', [
             'model' => $model,
         ]);

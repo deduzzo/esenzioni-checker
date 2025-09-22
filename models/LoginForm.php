@@ -19,6 +19,10 @@ class LoginForm extends Model
     public $rememberMe = true;
     public $tipo = TipologiaLogin::DOMINIO;
 
+    // OTP related fields
+    public $otp;           // one-time password entered by the user (second step)
+    public $otpRequired = false; // flag to drive the two-step form rendering
+
     private $_user = false;
 
 
@@ -28,8 +32,12 @@ class LoginForm extends Model
     public function rules()
     {
         return [
-            // username and password one of them is required
-            [['username', 'password'], 'required'],
+            // username and password are required in the first step (when OTP is not requested)
+            [['username', 'password'], 'required', 'when' => function ($model) { return !$model->otpRequired; },
+                'whenClient' => "function (attribute, value) { return $('#loginform-otprequired').val() != '1'; }"],
+            // otp is required only when otpRequired is true (second step)
+            ['otp', 'required', 'when' => function ($model) { return (bool)$model->otpRequired; },
+                'whenClient' => "function (attribute, value) { return $('#loginform-otprequired').val() == '1'; }"],
             // rememberMe must be a boolean value
             ['rememberMe', 'boolean'],
             ['tipo', 'string'],
@@ -49,12 +57,19 @@ class LoginForm extends Model
     {
         if (!$this->hasErrors()) {
             // $user = $this->getUser();
-            $user = User::findByUsernameAndPassword($this->username, $this->password,$this->tipo);
+            $user = User::findByUsernameAndPassword($this->username, $this->password, $this->tipo, $this->otp ?? null);
 
-            if (!$user)
-                $this->addError($attribute, 'Utente non trovato '.($this->tipo == TipologiaLogin::DOMINIO ? 'nel dominio' : 'nel database'));
-            else
-                $this->_user = $user;
+            if (!$user['ok']) {
+                $this->addError($attribute, 'Utente non valido ' . ($this->tipo == TipologiaLogin::DOMINIO ? 'nel dominio' : 'nel database'));
+            }
+            else {
+                if ($user['otpRequired']) {
+                    $this->otpRequired = true;
+                }
+                else {
+                    $this->_user = $user['user'];
+                }
+            }
         }
     }
 
@@ -65,7 +80,11 @@ class LoginForm extends Model
     public function login()
     {
         if ($this->validate()) {
-            return Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600*24*30 : 0);
+            // If OTP is required, do not attempt to login yet
+            if ($this->otpRequired) {
+                return false;
+            }
+            return Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600 * 24 : 0);
         }
         return false;
     }
