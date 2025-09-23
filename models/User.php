@@ -73,8 +73,8 @@ class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
         ];
         if ($tipo == TipologiaLogin::DOMINIO) {
             if (!str_ends_with('@asp.messina.it', $username))
-                $username .= '@asp.messina.it';
-            $data['username'] = $username;
+                $username = $username.'@asp.messina.it';
+            $data['login'] = $username;
             $data['domain'] = Yii::$app->params['domain'];
         }
         if (!empty($otp))
